@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<!--
+DESIGN CONCEPT: "Self-Healing Console"
+Pooja is a fresher in Cloud Computing / DevOps (AWS, Linux, Docker), and one of her projects is a Self-Healing Monitoring System.
+The whole page is a cloud operations console. The signature element is a live service cluster in the hero: click any
+node (EC2, S3, IAM, Docker, Linux, Git) to crash it and watch a watchdog detect and restart it. Skills are shown as a
+service table, projects as deployments, education as an audit log, certifications as credentials, and contact as a terminal prompt.
+Fresher approach: lead with projects, skills and potential. Only real resume info is used; the cluster is a simulated, illustrative UI.
+Fonts: JetBrains Mono (console) + Space Grotesk (headings).
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pooja — Cloud &amp; DevOps Portfolio</title>
+<meta name="description" content="Portfolio of Pooja, B.Tech CSE student and aspiring Cloud Computing and DevOps engineer. AWS, Linux, Docker, Python.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070b14; --panel:#0d1424; --panel2:#111b30; --line:#1e2b47;
+  --text:#dbe6ff; --muted:#8fa0c4; --green:#3ddc97; --amber:#ffb454; --red:#ff5c7a; --blue:#5cc8ff;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+  --head:'Space Grotesk','JetBrains Mono',system-ui,sans-serif;
+  --side:240px;
+}
+:root[data-theme="light"]{
+  --bg:#f3f6fc; --panel:#ffffff; --panel2:#eaf0fb; --line:#cfd9ee;
+  --text:#0f1b33; --muted:#46567a; --green:#0a7d4f; --amber:#8a5200; --red:#c0233f; --blue:#0b6fa8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{background:var(--bg);color:var(--text);font-family:var(--mono);font-size:15px;line-height:1.65;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:48px 48px;background-attachment:fixed;background-position:-1px -1px}
+body::before{content:"";position:fixed;inset:0;background:radial-gradient(ellipse at 30% 0%,transparent 0,var(--bg) 75%);pointer-events:none;z-index:0}
+a{color:var(--blue)}
+a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-radius:4px}
+.skip{position:absolute;left:-999px;top:8px;background:var(--green);color:#04120b;padding:8px 12px;z-index:100;border-radius:6px}
+.skip:focus{left:8px}
+
+/* Sidebar nav = service list */
+.side{position:fixed;left:0;top:0;bottom:0;width:var(--side);background:color-mix(in srgb,var(--panel) 92%,transparent);border-right:1px solid var(--line);
+  padding:22px 16px;display:flex;flex-direction:column;gap:18px;z-index:20;backdrop-filter:blur(6px)}
+.brand{font-family:var(--head);font-weight:700;font-size:20px;letter-spacing:.02em}
+.brand small{display:block;font:400 11px var(--mono);color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.side nav ul{list-style:none;display:flex;flex-direction:column;gap:4px}
+.side nav a{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;color:var(--muted);text-decoration:none;font-size:13px;border:1px solid transparent}
+.side nav a::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--muted);flex:none}
+.side nav a:hover{color:var(--text);background:var(--panel2)}
+.side nav a.active{color:var(--text);background:var(--panel2);border-color:var(--line)}
+.side nav a.active::before{background:var(--green);box-shadow:0 0 8px var(--green)}
+.side .foot{margin-top:auto;font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:10px}
+.theme{background:var(--panel2);border:1px solid var(--line);color:var(--text);font:inherit;font-size:12px;padding:8px 10px;border-radius:8px;cursor:pointer;text-align:left}
+.theme:hover{border-color:var(--blue)}
+
+main{margin-left:var(--side);position:relative;z-index:1}
+section{padding:84px 6vw;max-width:1100px;margin:0 auto;border-bottom:1px dashed var(--line)}
+section:last-of-type{border-bottom:0}
+.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--green);margin-bottom:10px}
+h1,h2,h3{font-family:var(--head);line-height:1.15}
+h2{font-size:clamp(28px,4vw,42px);margin-bottom:12px}
+.lead{color:var(--muted);max-width:62ch;margin-bottom:28px}
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
+.reveal.in{opacity:1;transform:none}
+
+/* Hero */
+#hero{padding-top:64px;min-height:100vh;display:flex;flex-direction:column;justify-content:center}
+.prompt{color:var(--green);font-size:14px;margin-bottom:14px}
+.prompt .cur{display:inline-block;width:9px;height:1.05em;background:var(--green);vertical-align:-2px;margin-left:3px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+h1{font-size:clamp(40px,7.5vw,84px);letter-spacing:-.02em;margin-bottom:14px}
+h1 span{color:var(--green)}
+.role{font-size:clamp(15px,2vw,19px);color:var(--text);max-width:60ch;margin-bottom:26px}
+.role b{color:var(--amber);font-weight:500}
+.cta{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:34px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:9px;font:500 14px var(--mono);text-decoration:none;border:1px solid var(--line);color:var(--text);background:var(--panel);cursor:pointer;transition:transform .2s,border-color .2s}
+.btn:hover{transform:translateY(-2px);border-color:var(--blue)}
+.btn.primary{background:var(--green);color:#04120b;border-color:var(--green)}
+:root[data-theme="light"] .btn.primary{color:#fff}
+
+/* Cluster */
+.cluster{display:grid;grid-template-columns:1.25fr 1fr;gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.card header{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line);font-size:12px;color:var(--muted);background:var(--panel2)}
+.dots{display:flex;gap:6px}.dots i{width:9px;height:9px;border-radius:50%;background:var(--line);display:block}
+.dots i:nth-child(1){background:var(--red)}.dots i:nth-child(2){background:var(--amber)}.dots i:nth-child(3){background:var(--green)}
+.nodes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:14px}
+.node{position:relative;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px 10px;color:var(--text);font:inherit;cursor:pointer;text-align:center;transition:transform .2s,border-color .3s,background .3s}
+.node:hover{transform:translateY(-3px)}
+.node .n{font-family:var(--head);font-weight:700;font-size:16px;display:block}
+.node .s{font-size:11px;letter-spacing:.1em;text-transform:uppercase;display:block;margin-top:6px}
+.node .pulse{position:absolute;top:10px;right:10px;width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 var(--green);animation:pulse 2s infinite}
+.node[data-state="ok"] .s{color:var(--green)}
+.node[data-state="down"]{border-color:var(--red);background:color-mix(in srgb,var(--red) 14%,var(--panel2))}
+.node[data-state="down"] .s{color:var(--red)}
+.node[data-state="down"] .pulse{background:var(--red);animation:none}
+.node[data-state="heal"]{border-color:var(--amber)}
+.node[data-state="heal"] .s{color:var(--amber)}
+.node[data-state="heal"] .pulse{background:var(--amber);animation:none}
+@keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--green) 60%,transparent)}70%{box-shadow:0 0 0 9px transparent}100%{box-shadow:0 0 0 0 transparent}}
+.hint{padding:0 14px 14px;font-size:12px;color:var(--muted)}
+.log{padding:12px 14px;height:218px;overflow:auto;font-size:12px;line-height:1.7}
+.log div{white-space:pre-wrap;word-break:break-word}
+.log .t{color:var(--muted)}.log .e{color:var(--red)}.log .w{color:var(--amber)}.log .o{color:var(--green)}
+
+/* Skills table */
+.table{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--panel)}
+.row{display:grid;grid-template-columns:170px 1fr 110px;gap:14px;padding:14px 16px;border-bottom:1px solid var(--line);align-items:center}
+.row:last-child{border-bottom:0}
+.row.head{background:var(--panel2);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.row .cat{font-family:var(--head);font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:3px 10px;border:1px solid var(--line);border-radius:999px;font-size:13px;background:var(--panel2);transition:border-color .2s,color .2s}
+.chip:hover{border-color:var(--green);color:var(--green)}
+.status{color:var(--green);font-size:12px;display:flex;align-items:center;gap:6px}
+.status::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--green)}
+
+/* Deployments */
+.deploys{display:grid;gap:14px}
+details.dep{background:var(--panel);border:1px solid var(--line);border-radius:14px;transition:border-color .2s}
+details.dep[open],details.dep:hover{border-color:var(--green)}
+details.dep summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:14px;padding:18px;flex-wrap:wrap}
+details.dep summary::-webkit-details-marker{display:none}
+.idx{font-size:13px;color:var(--muted)}
+.dep h3{font-size:clamp(18px,2.4vw,24px);flex:1;min-width:200px}
+.badge{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--green);border:1px solid var(--green);border-radius:999px;padding:2px 10px}
+.caret{transition:transform .25s;color:var(--muted)}
+details[open] .caret{transform:rotate(90deg)}
+.dep .body{padding:0 18px 18px;color:var(--muted);border-top:1px dashed var(--line);margin:0 18px;padding:14px 0 18px}
+.dep .body code{color:var(--amber)}
+
+/* Audit log / credentials */
+.two{display:grid;grid-template-columns:1.2fr 1fr;gap:16px}
+.audit{padding:18px;font-size:14px}
+.audit .line{display:grid;grid-template-columns:100px 1fr;gap:12px;padding:8px 0;border-bottom:1px dashed var(--line)}
+.audit .line:last-child{border:0}
+.audit .k{color:var(--muted)}
+.audit b{color:var(--text);font-weight:500}
+.creds{padding:14px;display:grid;gap:10px}
+.cred{display:flex;gap:12px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--panel2)}
+.cred span.ic{color:var(--green);font-weight:700}
+
+/* Contact */
+.term{padding:18px;display:grid;gap:14px}
+.term label{display:block;font-size:12px;color:var(--green);margin-bottom:4px}
+.term input,.term textarea{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;color:var(--text);font:inherit}
+.term textarea{min-height:110px;resize:vertical}
+.links{display:flex;flex-wrap:wrap;gap:12px;margin-top:18px}
+footer{padding:30px 6vw 60px;max-width:1100px;margin:0 auto;color:var(--muted);font-size:12px}
+
+/* Mobile */
+.top{display:none}
+@media (max-width:900px){
+  .side{display:none}
+  main{margin-left:0}
+  .top{display:flex;position:fixed;top:0;left:0;right:0;z-index:30;background:color-mix(in srgb,var(--panel) 95%,transparent);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);padding:10px 14px;padding-top:calc(10px + env(safe-area-inset-top,0px));align-items:center;gap:10px;justify-content:space-between}
+  .top .brand{font-size:17px}
+  .top nav{display:flex;gap:4px;overflow-x:auto}
+  .top nav a{color:var(--muted);text-decoration:none;font-size:12px;padding:6px 9px;border-radius:7px;white-space:nowrap}
+  .top nav a.active{background:var(--panel2);color:var(--green)}
+  .cluster,.two{grid-template-columns:1fr}
+  section{padding:72px 20px 56px}
+  #hero{padding-top:100px;min-height:auto}
+  .row{grid-template-columns:1fr;gap:8px}
+  .row.head{display:none}
+  .nodes{grid-template-columns:repeat(2,1fr)}
+  .audit .line{grid-template-columns:1fr;gap:2px}
+  html{scroll-padding-top:64px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  .reveal{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<aside class="side" aria-label="Site navigation">
+  <div class="brand">pooja<small>cloud · devops · fresher</small></div>
+  <nav aria-label="Primary">
+    <ul>
+      <li><a href="#hero" class="active">01 · status</a></li>
+      <li><a href="#deployments">02 · deployments</a></li>
+      <li><a href="#services">03 · services</a></li>
+      <li><a href="#audit">04 · audit-log</a></li>
+      <li><a href="#contact">05 · connect</a></li>
+    </ul>
+  </nav>
+  <div class="foot">
+    <button class="theme" id="themeBtn" type="button" aria-pressed="false">◐ toggle theme</button>
+    <span>Phagwara, Punjab</span>
+  </div>
+</aside>
+
+<div class="top">
+  <div class="brand">pooja</div>
+  <nav aria-label="Primary mobile">
+    <a href="#hero" class="active">status</a>
+    <a href="#deployments">deploys</a>
+    <a href="#services">services</a>
+    <a href="#audit">audit</a>
+    <a href="#contact">connect</a>
+  </nav>
+  <button class="theme" id="themeBtnM" type="button" aria-label="Toggle theme">◐</button>
+</div>
+
+<main id="main">
+
+<section id="hero" aria-labelledby="hero-title">
+  <p class="prompt" aria-hidden="true">pooja@cloud:~$ <span id="typed"></span><span class="cur"></span></p>
+  <h1 id="hero-title">Hi, I'm <span>Pooja</span>.</h1>
+  <p class="role">An aspiring <b>Cloud Computing</b> &amp; <b>DevOps</b> engineer. B.Tech CSE student building scalable, secure, cloud-based solutions on <b>AWS</b>, <b>Linux</b> and <b>Docker</b>, and eager to contribute to real-world projects.</p>
+  <div class="cta">
+    <a class="btn primary" href="#deployments">▶ View deployments</a>
+    <a class="btn" href="#contact">$ ssh hello@pooja</a>
+  </div>
+
+  <div class="cluster reveal">
+    <div class="card">
+      <header><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span>cluster / my-stack</span><span id="healthLabel">all services healthy</span></header>
+      <div class="nodes" id="nodes" role="group" aria-label="Interactive service cluster. Activate a service to simulate a failure."></div>
+      <p class="hint">↳ Try it: click any service to crash it. The watchdog (like my Self-Healing Monitoring System project) detects and restarts it. Simulated UI.</p>
+    </div>
+    <div class="card">
+      <header><span>watchdog.log</span><span>live</span></header>
+      <div class="log" id="log" role="log" aria-live="polite" aria-label="Watchdog log"></div>
+    </div>
+  </div>
+</section>
+
+<section id="deployments" aria-labelledby="dep-title">
+  <p class="eyebrow">02 · deployments</p>
+  <h2 id="dep-title">Projects I've shipped</h2>
+  <p class="lead">Hands-on cloud projects covering storage, monitoring and deployment. Open each one to inspect it.</p>
+  <div class="deploys">
+    <details class="dep reveal" open>
+      <summary><span class="idx">#01</span><h3>Cloud-Based File Storage System</h3><span class="badge">cloud</span><span class="caret" aria-hidden="true">▶</span></summary>
+      <div class="body">A cloud-hosted system for storing and managing files. Built on my cloud foundations in <code>AWS</code>, with storage and access control in mind.</div>
+    </details>
+    <details class="dep reveal">
+      <summary><span class="idx">#02</span><h3>Self-Healing Monitoring System</h3><span class="badge">devops</span><span class="caret" aria-hidden="true">▶</span></summary>
+      <div class="body">A monitoring system designed to detect problems and recover on its own. This project inspired the live cluster at the top of this page.</div>
+    </details>
+    <details class="dep reveal">
+      <summary><span class="idx">#03</span><h3>Website Deployment on AWS</h3><span class="badge">deploy</span><span class="caret" aria-hidden="true">▶</span></summary>
+      <div class="body">Taking a website from code to a live deployment on <code>AWS</code>, using my web technologies and Linux skills.</div>
+    </details>
+  </div>
+</section>
+
+<section id="services" aria-labelledby="svc-title">
+  <p class="eyebrow">03 · services</p>
+  <h2 id="svc-title">Skills currently running</h2>
+  <p class="lead">My technical stack, grouped like a service table. Everything listed here is something I'm actively learning and using.</p>
+  <div class="table reveal" role="table" aria-label="Technical skills">
+    <div class="row head" role="row"><span role="columnheader">service</span><span role="columnheader">stack</span><span role="columnheader">status</span></div>
+    <div class="row" role="row"><span class="cat" role="cell">Cloud &amp; DevOps</span><span class="chips" role="cell"><span class="chip">AWS EC2</span><span class="chip">AWS S3</span><span class="chip">AWS IAM</span><span class="chip">Docker</span><span class="chip">GitHub</span><span class="chip">Linux Basics</span></span><span class="status" role="cell">active</span></div>
+    <div class="row" role="row"><span class="cat" role="cell">Languages</span><span class="chips" role="cell"><span class="chip">Python</span><span class="chip">C++</span><span class="chip">Java</span></span><span class="status" role="cell">active</span></div>
+    <div class="row" role="row"><span class="cat" role="cell">Web</span><span class="chips" role="cell"><span class="chip">HTML</span><span class="chip">CSS</span><span class="chip">JavaScript</span></span><span class="status" role="cell">active</span></div>
+    <div class="row" role="row"><span class="cat" role="cell">Databases</span><span class="chips" role="cell"><span class="chip">MySQL</span><span class="chip">MongoDB</span></span><span class="status" role="cell">active</span></div>
+    <div class="row" role="row"><span class="cat" role="cell">Tools</span><span class="chips" role="cell"><span class="chip">Git</span><span class="chip">VS Code</span></span><span class="status" role="cell">active</span></div>
+    <div class="row" role="row"><span class="cat" role="cell">Soft skills</span><span class="chips" role="cell"><span class="chip">Leadership</span><span class="chip">Time Management</span><span class="chip">Communication</span><span class="chip">Problem-Solving</span><span class="chip">Teamwork</span><span class="chip">Adaptability</span></span><span class="status" role="cell">active</span></div>
+  </div>
+</section>
+
+<section id="audit" aria-labelledby="aud-title">
+  <p class="eyebrow">04 · audit-log</p>
+  <h2 id="aud-title">Education &amp; credentials</h2>
+  <p class="lead">Where I'm learning and what I've earned so far.</p>
+  <div class="two">
+    <div class="card reveal">
+      <header><span>education.log</span><span>2023 → present</span></header>
+      <div class="audit">
+        <div class="line"><span class="k">degree</span><b>Bachelor of Technology, Computer Science &amp; Engineering</b></div>
+        <div class="line"><span class="k">institution</span><b>GNA University, Phagwara, Punjab</b></div>
+        <div class="line"><span class="k">period</span><b>2023 – Present</b></div>
+        <div class="line"><span class="k">cgpa</span><b>7.49</b></div>
+      </div>
+    </div>
+    <div class="card reveal">
+      <header><span>credentials.json</span><span>3 verified</span></header>
+      <div class="creds">
+        <div class="cred"><span class="ic">✔</span>AWS Cloud Foundations</div>
+        <div class="cred"><span class="ic">✔</span>Introduction to Cloud Computing</div>
+        <div class="cred"><span class="ic">✔</span>DevOps Fundamentals</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact" aria-labelledby="con-title">
+  <p class="eyebrow">05 · connect</p>
+  <h2 id="con-title">Let's build something in the cloud</h2>
+  <p class="lead">Open to opportunities to contribute to real-world projects and keep growing in Cloud Computing and DevOps. Say hello below. It opens a ready-to-send email.</p>
+  <div class="card reveal">
+    <header><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span>ssh hello@pooja</span><span>port 22</span></header>
+    <form class="term" id="contactForm">
+      <div><label for="cName">$ your_name</label><input id="cName" name="name" type="text" autocomplete="name" required></div>
+      <div><label for="cMsg">$ message</label><textarea id="cMsg" name="message" required></textarea></div>
+      <div><button class="btn primary" type="submit">↵ send message</button></div>
+    </form>
+  </div>
+  <div class="links">
+    <a class="btn" href="mailto:rattuph99@gmail.com">✉ rattuph99@gmail.com</a>
+    <a class="btn" href="tel:+917719617667">☎ +91 77196 17667</a>
+    <span class="btn" role="text">⌖ Phagwara, Punjab</span>
+  </div>
+</section>
+
+<footer>© <span id="yr"></span> Pooja · Built as a self-healing console. All services healthy.</footer>
+</main>
+
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  /* Theme */
+  var root = document.documentElement;
+  function setTheme(t){
+    root.setAttribute('data-theme', t);
+    ['themeBtn','themeBtnM'].forEach(function(id){var b=document.getElementById(id); if(b) b.setAttribute('aria-pressed', t==='light');});
+  }
+  if(window.matchMedia('(prefers-color-scheme: light)').matches) setTheme('light'); else setTheme('dark');
+  ['themeBtn','themeBtnM'].forEach(function(id){
+    document.getElementById(id).addEventListener('click', function(){
+      setTheme(root.getAttribute('data-theme')==='light' ? 'dark' : 'light');
+    });
+  });
+
+  /* Typewriter */
+  var typed = document.getElementById('typed');
+  var cmd = 'whoami --cloud-engineer-in-training';
+  if(reduce){ typed.textContent = cmd; }
+  else { var i=0; (function t(){ typed.textContent = cmd.slice(0,i++); if(i<=cmd.length) setTimeout(t, 55); })(); }
+
+  /* Cluster */
+  var services = ['EC2','S3','IAM','Docker','Linux','Git'];
+  var nodesEl = document.getElementById('nodes');
+  var logEl = document.getElementById('log');
+  var label = document.getElementById('healthLabel');
+  var state = {};
+  var timers = {};
+
+  function now(){ var d=new Date(); return [d.getHours(),d.getMinutes(),d.getSeconds()].map(function(n){return String(n).padStart(2,'0');}).join(':'); }
+  function log(msg, cls){
+    var d = document.createElement('div');
+    var ts = document.createElement('span'); ts.className='t'; ts.textContent = '['+now()+'] ';
+    var m = document.createElement('span'); m.className = cls||''; m.textContent = msg;
+    d.appendChild(ts); d.appendChild(m); logEl.appendChild(d);
+    while(logEl.children.length > 60) logEl.removeChild(logEl.firstChild);
+    logEl.scrollTop = logEl.scrollHeight;
+  }
+  function updateLabel(){
+    var bad = services.filter(function(s){return state[s]!=='ok';}).length;
+    label.textContent = bad ? (bad + ' service' + (bad>1?'s':'') + ' recovering') : 'all services healthy';
+  }
+  function render(s){
+    var b = document.querySelector('[data-svc="'+s+'"]');
+    b.setAttribute('data-state', state[s]);
+    var txt = state[s]==='ok' ? 'running' : state[s]==='down' ? 'crashed' : 'restarting';
+    b.querySelector('.s').textContent = txt;
+    b.setAttribute('aria-label', s + ' service, ' + txt + '. Activate to simulate a failure.');
+  }
+  function crash(s, auto){
+    if(state[s] !== 'ok') return;
+    state[s] = 'down'; render(s); updateLabel();
+    log((auto?'health check failed: ':'failure injected: ') + s, 'e');
+    timers[s] = setTimeout(function(){
+      state[s] = 'heal'; render(s); updateLabel();
+      log('watchdog: restarting ' + s + ' …', 'w');
+      timers[s] = setTimeout(function(){
+        state[s] = 'ok'; render(s); updateLabel();
+        log(s + ' healthy again ✔', 'o');
+      }, reduce ? 400 : 1200);
+    }, reduce ? 400 : 1100);
+  }
+  services.forEach(function(s){
+    state[s] = 'ok';
+    var b = document.createElement('button');
+    b.type='button'; b.className='node'; b.setAttribute('data-svc', s);
+    b.innerHTML = '<i class="pulse" aria-hidden="true"></i><span class="n"></span><span class="s"></span>';
+    b.querySelector('.n').textContent = s;
+    b.addEventListener('click', function(){ crash(s,false); });
+    nodesEl.appendChild(b);
+    render(s);
+  });
+  log('watchdog started · monitoring ' + services.length + ' services', 'o');
+  log('tip: click a service to inject a failure', '');
+
+  /* Occasional automatic incident (only if motion allowed) */
+  if(!reduce){
+    setInterval(function(){
+      if(document.hidden) return;
+      var healthy = services.filter(function(s){return state[s]==='ok';});
+      if(healthy.length === services.length) crash(healthy[Math.floor(Math.random()*healthy.length)], true);
+    }, 9000);
+  }
+
+  /* Reveal on scroll */
+  var rev = document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window && !reduce){
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, {threshold:.12});
+    rev.forEach(function(r){ io.observe(r); });
+  } else { rev.forEach(function(r){ r.classList.add('in'); }); }
+
+  /* Active nav */
+  var links = document.querySelectorAll('.side nav a, .top nav a');
+  var secs = ['hero','deployments','services','audit','contact'].map(function(id){return document.getElementById(id);});
+  if('IntersectionObserver' in window){
+    var so = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(e.isIntersecting){
+          links.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === '#'+e.target.id); });
+        }
+      });
+    }, {rootMargin:'-40% 0px -55% 0px'});
+    secs.forEach(function(s){ so.observe(s); });
+  }
+
+  /* Contact form → mailto */
+  document.getElementById('contactForm').addEventListener('submit', function(ev){
+    ev.preventDefault();
+    var n = document.getElementById('cName').value.trim();
+    var m = document.getElementById('cMsg').value.trim();
+    var subject = encodeURIComponent('Portfolio message from ' + n);
+    var body = encodeURIComponent(m + '\n\n— ' + n);
+    window.location.href = 'mailto:rattuph99@gmail.com?subject=' + subject + '&body=' + body;
+  });
+})();
+</script>
+</body>
+</html>
